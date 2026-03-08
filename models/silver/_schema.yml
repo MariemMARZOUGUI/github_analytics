@@ -1,0 +1,67 @@
+version: 2
+
+models:
+
+  - name: stg_repositories
+    description: "Silver model for repositories"
+    columns:
+      - name: repo_id
+        tests:
+          - unique
+          - not_null
+      - name: language
+        tests:
+          - not_null
+      - name: archived
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+  - name: stg_commits
+    description: "Silver model for commits"
+    columns:
+      - name: commit_sha
+        tests:
+          - unique
+          - not_null
+      - name: day_of_week
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1, 2, 3, 4, 5, 6]
+      - name: author_login
+        tests:
+          - not_null
+      - name: repo_id
+        tests:
+          - not_null
+
+  - name: stg_pull_requests
+    description: "Silver model for pull requests"
+    columns:
+      - name: pr_number
+        tests:
+          - unique
+          - not_null
+      - name: pr_state
+        tests:
+          - accepted_values:
+              values: ['open', 'closed', 'merged']
+      - name: repo_id
+        tests:
+          - not_null
+
+  - name: stg_issues
+    description: "Silver model for issues"
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+      - name: issue_state
+        tests:
+          - accepted_values:
+              values: ['open', 'closed']
+      - name: repo_id
+        tests:
+          - not_null

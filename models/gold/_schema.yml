@@ -1,0 +1,67 @@
+version: 2
+
+models:
+
+  - name: dim_repository
+    description: "Dimension table for repositories"
+    columns:
+      - name: repo_id
+        tests:
+          - unique
+          - not_null
+      - name: owner_login
+        tests:
+          - not_null
+
+  - name: dim_contributors
+    description: "Dimension table for contributors"
+    columns:
+      - name: contributor_id
+        tests:
+          - unique
+          - not_null
+      - name: first_contribution_at
+        tests:
+          - not_null
+
+  - name: fact_repo_activity
+    description: "Fact table with daily activity per repo"
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_repository')
+              field: repo_id
+      - name: date_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_id
+
+  - name: scoring_repositories
+    description: "Gold scoring table of repositories"
+    columns:
+      - name: repo_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('dim_repository')
+              field: repo_id
+      - name: ranking
+        tests:
+          - not_null
+      - name: score_global
+        tests:
+          - not_null
+      - name: score_activity
+        tests:
+          - not_null
+      - name: score_responsiveness
+        tests:
+          - not_null
+      - name: score_community
+        tests:
+          - not_null
