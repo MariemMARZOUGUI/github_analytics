@@ -15,11 +15,14 @@ Two Silver models were modified to use **dbt incremental materialization**: 'stg
 This reduces processing time and improves pipeline efficiency.
 
 ## 1. Model: 'stg_commits'
+
 **Strategy:** 'append'
 The append strategy inserts only new rows.
 Git commits are **immutable**, meaning they cannot be modified after creation.
 Therefore, existing commits never change and only **new commits need to be added**.
+
 **Incremental column**: author_date: This timestamp identifies when the commit was created and allows dbt to detect new commits.
+
 **Incremental filter**
 ```
 {% if is_incremental() %}
@@ -34,13 +37,16 @@ No 'unique_key' is required because existing rows are never updated.
 **Strategy:** 'merge'
 The merge strategy performs an **upsert**: update rows if they already exist and insert rows if they are new
 Unlike commits, GitHub issues can change over time. For example, an issue may move from **open --> closed**, or its metadata may be updated.
+
 **Incremental column**: issue_updated_at: This column represents the latest modification time of the issue.
+
 **Incremental filter**
 ```
 {% if is_incremental() %}
 and issue_updated_at > (select max(issue_updated_at) from {{ this }})
 {% endif %}
 ```
+
 **Unique key**:issue_id: This identifier uniquely represents each issue and allows dbt to correctly update existing rows.
 
 # Reflection Questions
